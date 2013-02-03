@@ -104,7 +104,7 @@ public class GameScreen implements Screen {
 	    
 		spriteBatch.setProjectionMatrix(camera.combined);
 
-		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_UP))
+		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_UP) || (Gdx.input.isTouched()))
 			car.accelerate = ACC_ACCELERATE;
 		else if (Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN))
 			car.accelerate = ACC_BRAKE;
