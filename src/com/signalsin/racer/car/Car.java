@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.signalsin.racer.RacerGame;
+import com.signalsin.racer.screens.GameScreen;
 
 public class Car {
 	public Body body;
@@ -22,8 +22,8 @@ public class Car {
 	public Car(World world, float width, float length, Vector2 position,
 			float angle, float power, float maxSteerAngle, float maxSpeed) {
 		super();		
-		this.steer = RacerGame.STEER_NONE;
-		this.accelerate = RacerGame.ACC_NONE;
+		this.steer = GameScreen.STEER_NONE;
+		this.accelerate = GameScreen.ACC_NONE;
 		
 		this.width = width;
 		this.length = length;
@@ -115,9 +115,9 @@ public class Car {
         //calculate the change in wheel's angle for this update
         float incr=(this.maxSteerAngle) * deltaTime * 5;
         
-        if(this.steer==RacerGame.STEER_LEFT){
+        if(this.steer==GameScreen.STEER_LEFT){
             this.wheelAngle=Math.min(Math.max(this.wheelAngle, 0)+incr, this.maxSteerAngle); //increment angle without going over max steer
-        }else if(this.steer==RacerGame.STEER_RIGHT){
+        }else if(this.steer==GameScreen.STEER_RIGHT){
             this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)-incr, -this.maxSteerAngle); //decrement angle without going over max steer
         }else{
             this.wheelAngle=0;        
@@ -132,10 +132,10 @@ public class Car {
         Vector2 baseVector; //vector pointing in the direction force will be applied to a wheel ; relative to the wheel.
         
         //if accelerator is pressed down and speed limit has not been reached, go forwards
-        if((this.accelerate==RacerGame.ACC_ACCELERATE) && (this.getSpeedKMH() < this.maxSpeed)){
+        if((this.accelerate==GameScreen.ACC_ACCELERATE) && (this.getSpeedKMH() < this.maxSpeed)){
         	baseVector= new Vector2(0, -1);
         }
-        else if(this.accelerate==RacerGame.ACC_BRAKE){
+        else if(this.accelerate==GameScreen.ACC_BRAKE){
             //braking, but still moving forwards - increased force
             if(this.getLocalVelocity().y<0)
             	baseVector= new Vector2(0f, 1.3f);
@@ -143,7 +143,7 @@ public class Car {
             else 
             	baseVector=new Vector2(0f, 0.7f);
         }
-        else if (this.accelerate==RacerGame.ACC_NONE ) {
+        else if (this.accelerate==GameScreen.ACC_NONE ) {
         	//slow down if not accelerating
         	baseVector=new Vector2(0, 0);
             if (this.getSpeedKMH()<7)
