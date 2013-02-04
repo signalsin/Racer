@@ -28,7 +28,7 @@ public class BoxProp {
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(this.width / 2, this.height / 2);
 		fixtureDef.shape=boxShape;
-		fixtureDef.restitution=0.4f; //positively bouncy!
+		fixtureDef.restitution=0.7f; //positively bouncy!
 	    this.body.createFixture(fixtureDef);
 	    boxShape.dispose();
 	}

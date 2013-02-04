@@ -165,7 +165,7 @@ public class Car {
            wheel.body.applyForce(wheel.body.getWorldVector(new Vector2(forceVector.x, forceVector.y)), position );
         }
         
-        System.out.println("Car Speed: " + this.getSpeedKMH());
+        //System.out.println("Car Speed: " + this.getSpeedKMH());
         //if going very slow, stop - to prevent endless sliding
 
 	}

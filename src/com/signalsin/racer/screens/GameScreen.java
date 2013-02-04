@@ -103,20 +103,23 @@ public class GameScreen implements Screen {
 	    camera.update();
 	    
 		spriteBatch.setProjectionMatrix(camera.combined);
-
-		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_UP) || (Gdx.input.isTouched()))
-			car.accelerate = ACC_ACCELERATE;
-		else if (Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN))
-			car.accelerate = ACC_BRAKE;
-		else
-			car.accelerate = ACC_NONE;
 		
-		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+		if (Gdx.input.isTouched()){
+			car.accelerate = ACC_ACCELERATE;
+		}
+		else{
+			car.accelerate = ACC_NONE;
+		}
+		
+		if (Gdx.input.getAccelerometerY() < -1){
 			car.steer = STEER_LEFT;
-		else if (Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))
+		}
+		else if (Gdx.input.getAccelerometerY() > 1){
 			car.steer = STEER_RIGHT;
-		else
+		}
+		else {
 			car.steer = STEER_NONE;
+		}
 		
 		car.update(Gdx.app.getGraphics().getDeltaTime());
 		
