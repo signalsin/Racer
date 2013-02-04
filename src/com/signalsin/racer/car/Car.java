@@ -44,8 +44,8 @@ public class Car {
 		//init shape
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.6f; //friction when rubbing against other shapes
-		fixtureDef.restitution  = 0.4f; //amount of force feedback when hitting something. >0 makes the car bounce off, it's fun!
+		fixtureDef.friction = 0.4f; //friction when rubbing against other shapes
+		fixtureDef.restitution  = 0.2f; //amount of force feedback when hitting something. >0 makes the car bounce off, it's fun!
 		PolygonShape carShape = new PolygonShape();
 		carShape.setAsBox(this.width / 2, this.length / 2);
 		fixtureDef.shape = carShape;
@@ -165,7 +165,6 @@ public class Car {
            wheel.body.applyForce(wheel.body.getWorldVector(new Vector2(forceVector.x, forceVector.y)), position );
         }
         
-        //System.out.println("Car Speed: " + this.getSpeedKMH());
         //if going very slow, stop - to prevent endless sliding
 
 	}
