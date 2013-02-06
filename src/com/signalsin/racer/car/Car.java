@@ -3,6 +3,7 @@ package com.signalsin.racer.car;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -13,14 +14,14 @@ import com.signalsin.racer.screens.GameScreen;
 
 public class Car {
 	public Body body;
-	float width, length, angle, maxSteerAngle, maxSpeed, power;
+	float width, length, angle, maxSteerAngle, minSteerAngle, maxSpeed, power;
 	float wheelAngle;
 	public int steer, accelerate;
 	public Vector2 position;
 	public List<Wheel> wheels;
 	
 	public Car(World world, float width, float length, Vector2 position,
-			float angle, float power, float maxSteerAngle, float maxSpeed) {
+			float angle, float power, float minSteerAngle, float maxSteerAngle, float maxSpeed) {
 		super();		
 		this.steer = GameScreen.STEER_NONE;
 		this.accelerate = GameScreen.ACC_NONE;
@@ -29,6 +30,7 @@ public class Car {
 		this.length = length;
 		this.angle = angle;
 		this.maxSteerAngle = maxSteerAngle;
+		this.minSteerAngle = minSteerAngle;
 		this.maxSpeed = maxSpeed;
 		this.power = power;
 		this.position = position;
@@ -109,17 +111,29 @@ public class Car {
         for(Wheel wheel:wheels){
         	wheel.killSidewaysVelocity();
         }
-    
+        
         //2. SET WHEEL ANGLE
   
         //calculate the change in wheel's angle for this update
         float incr=(this.maxSteerAngle) * deltaTime * 5;
         
         if(this.steer==GameScreen.STEER_LEFT){
-            this.wheelAngle=Math.min(Math.max(this.wheelAngle, 0)+incr, this.maxSteerAngle); //increment angle without going over max steer
-        }else if(this.steer==GameScreen.STEER_RIGHT){
-            this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)-incr, -this.maxSteerAngle); //decrement angle without going over max steer
-        }else{
+            this.wheelAngle=Math.min(Math.max(this.wheelAngle, 0)+incr, this.minSteerAngle); //increment angle without going over max steer
+            Gdx.app.log("Steer", "left");
+        }
+        else if(this.steer==GameScreen.STEER_RIGHT){
+            this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)-incr, -this.minSteerAngle); //decrement angle without going over max steer
+            Gdx.app.log("Steer", "right");
+        }
+        else if(this.steer==GameScreen.STEER_HARD_LEFT){
+            this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)+incr, this.maxSteerAngle);
+            Gdx.app.log("Steer", "Hard left");
+        }
+        else if(this.steer==GameScreen.STEER_HARD_RIGHT){
+            this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)-incr, -this.maxSteerAngle);
+            Gdx.app.log("Steer", "Hard right");
+        }
+        else {
             this.wheelAngle=0;        
         }
 

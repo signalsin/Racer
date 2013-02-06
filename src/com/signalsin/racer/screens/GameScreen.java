@@ -1,7 +1,6 @@
 package com.signalsin.racer.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,8 +21,10 @@ public class GameScreen implements Screen {
 	RacerGame game;
 	
 	public static final int STEER_NONE=0;
-	public static final int STEER_RIGHT=1;
-	public static final int STEER_LEFT=2;
+	public static final int STEER_LEFT=1;
+	public static final int STEER_RIGHT=2;
+	public static final int STEER_HARD_LEFT=3;
+	public static final int STEER_HARD_RIGHT=4;
 
 	public static final int ACC_NONE=0;
 	public static final int ACC_ACCELERATE=1;
@@ -68,7 +69,7 @@ public class GameScreen implements Screen {
 		world = new World(new Vector2(0.0f, 0.0f), true);	
 	    
 	    this.car = new Car(world, 2, 4,
-	    		new Vector2(10, 10), (float) Math.PI, 60, 20, 60);
+	    		new Vector2(10, 10), (float) Math.PI, 60, 15, 30, 60);
 		
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, screenWidth, screenHeight);
@@ -111,8 +112,14 @@ public class GameScreen implements Screen {
 			car.accelerate = ACC_NONE;
 		}
 		
-		if (Gdx.input.getAccelerometerY() < -1){
+		if (Gdx.input.getAccelerometerY() < -2.5){
+			car.steer = STEER_HARD_LEFT;
+		}
+		else if (Gdx.input.getAccelerometerY() < -1){
 			car.steer = STEER_LEFT;
+		}
+		else if (Gdx.input.getAccelerometerY() > 2.5){
+			car.steer = STEER_HARD_RIGHT;
 		}
 		else if (Gdx.input.getAccelerometerY() > 1){
 			car.steer = STEER_RIGHT;
