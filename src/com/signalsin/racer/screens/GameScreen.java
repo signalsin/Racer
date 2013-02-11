@@ -4,13 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.signalsin.racer.RacerGame;
 import com.signalsin.racer.car.BoxProp;
 import com.signalsin.racer.car.Car;
+import com.signalsin.racer.resources.ImageCache;
 
 public class GameScreen implements Screen {
 	/**
@@ -32,6 +36,10 @@ public class GameScreen implements Screen {
 	
 	private OrthographicCamera camera;
 	private SpriteBatch spriteBatch;
+	
+	private Sprite playerSprite;
+	private TextureRegion playerTexture;
+	
 	/**
 	 * This is the main box2d "container" object. All bodies will be loaded in
 	 * this object and will be simulated through calls to this object.
@@ -49,7 +57,7 @@ public class GameScreen implements Screen {
 	private int screenHeight;	
 	private float worldWidth;
 	private float worldHeight;
-	private static int PIXELS_PER_METER=15;      //how many pixels in a meter
+	private static int PIXELS_PER_METER=10;      //how many pixels in a meter
 	
 	Car car;
 	
@@ -60,6 +68,11 @@ public class GameScreen implements Screen {
     }
 	
 	public void onCreate() {		
+		
+		//load texture files
+		ImageCache.load("cars.atlas");
+		
+		//establish the Box2D world first
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
 		worldWidth = screenWidth / PIXELS_PER_METER;
@@ -69,10 +82,18 @@ public class GameScreen implements Screen {
 		world = new World(new Vector2(0.0f, 0.0f), true);	
 	    
 	    this.car = new Car(world, 2, 4,
-	    		new Vector2(10, 10), (float) Math.PI, 60, 15, 30, 60);
+	    		new Vector2(10, 10), (float) Math.PI, 60, 15, 25, 100);
 		
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, screenWidth, screenHeight);
+	    
+	    //create the sprite for the player car
+		playerTexture = ImageCache.getTexture("playerCar");
+		playerSprite = new Sprite(playerTexture);
+		playerSprite.setPosition(PIXELS_PER_METER * car.body.getPosition().x - ImageCache.getTexture("playerCar").getRegionWidth() / 2,
+				PIXELS_PER_METER * car.body.getPosition().y - ImageCache.getTexture("playerCar").getRegionHeight() / 2 );
+	    
+		
 	    spriteBatch = new SpriteBatch();		
 										
 		debugRenderer = new Box2DDebugRenderer();
@@ -88,7 +109,8 @@ public class GameScreen implements Screen {
 		BoxProp wall1 = new BoxProp(world, worldWidth, 1, new Vector2 (worldWidth/2,0.5f)); //bottom
 	    BoxProp wall2 = new BoxProp(world, 1, worldHeight-2, new Vector2 (0.5f, worldHeight/2));//left
 	    BoxProp wall3 = new BoxProp(world,  worldWidth, 1, new Vector2 (worldWidth/2,worldHeight-0.5f));//top
-	    BoxProp wall4 = new BoxProp(world, 1, worldHeight-2, new Vector2 (worldWidth-0.5f, worldHeight/2));	  //right  
+	    BoxProp wall4 = new BoxProp(world, 1, worldHeight-2, new Vector2 (worldWidth-0.5f, worldHeight/2));	  //right
+	
 	}
 
 	@Override
@@ -139,6 +161,18 @@ public class GameScreen implements Screen {
 		world.step(Gdx.app.getGraphics().getDeltaTime(), 3, 3);
 		
 		world.clearForces();
+		
+		//draw the sprites
+		spriteBatch.begin();
+		
+		playerSprite.setPosition(PIXELS_PER_METER * car.body.getPosition().x - ImageCache.getTexture("playerCar").getRegionWidth() / 2,
+				PIXELS_PER_METER * car.body.getPosition().y - ImageCache.getTexture("playerCar").getRegionHeight() / 2 );
+		playerSprite.setRotation((MathUtils.radiansToDegrees * car.body.getAngle()));
+		
+		playerSprite.draw(spriteBatch);
+		
+		spriteBatch.end();
+		
 		
 		/**
 		 * Draw this last, so we can see the collision boundaries on top of the
