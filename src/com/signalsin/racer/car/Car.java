@@ -10,21 +10,29 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.signalsin.racer.screens.GameScreen;
 
 public class Car {
 	public Body body;
 	float width, length, angle, maxSteerAngle, minSteerAngle, maxSpeed, power;
 	float wheelAngle;
-	public int steer, accelerate;
-	public Vector2 position;
+	private int steer, accelerate;
 	public List<Wheel> wheels;
+	
+	public static final int STEER_NONE=0;
+	public static final int STEER_LEFT=1;
+	public static final int STEER_RIGHT=2;
+	public static final int STEER_HARD_LEFT=3;
+	public static final int STEER_HARD_RIGHT=4;
+	
+	public static final int ACC_NONE=0;
+	public static final int ACC_ACCELERATE=1;
+	public static final int ACC_BRAKE=2;
 	
 	public Car(World world, float width, float length, Vector2 position,
 			float angle, float power, float minSteerAngle, float maxSteerAngle, float maxSpeed) {
 		super();		
-		this.steer = GameScreen.STEER_NONE;
-		this.accelerate = GameScreen.ACC_NONE;
+		this.steer = STEER_NONE;
+		this.accelerate = ACC_NONE;
 		
 		this.width = width;
 		this.length = length;
@@ -33,7 +41,6 @@ public class Car {
 		this.minSteerAngle = minSteerAngle;
 		this.maxSpeed = maxSpeed;
 		this.power = power;
-		this.position = position;
 		this.wheelAngle = 0;
 		
 		//init body 
@@ -104,6 +111,14 @@ public class Car {
 	    this.body.setLinearVelocity(velocity);
 	}
 	
+	public void setSteer(int value){
+		this.steer = value;
+	}
+	
+	public void setAccelerate(int value){
+		this.accelerate = value;
+	}
+	
 	public void update (float deltaTime){
 	    
         //1. KILL SIDEWAYS VELOCITY
@@ -117,19 +132,19 @@ public class Car {
         //calculate the change in wheel's angle for this update
         float incr=(this.maxSteerAngle) * deltaTime * 5;
         
-        if(this.steer==GameScreen.STEER_LEFT){
+        if(this.steer== STEER_LEFT){
             this.wheelAngle=Math.min(Math.max(this.wheelAngle, 0)+incr, this.minSteerAngle); //increment angle without going over max steer
             Gdx.app.log("Steer", "left");
         }
-        else if(this.steer==GameScreen.STEER_RIGHT){
+        else if(this.steer== STEER_RIGHT){
             this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)-incr, -this.minSteerAngle); //decrement angle without going over max steer
             Gdx.app.log("Steer", "right");
         }
-        else if(this.steer==GameScreen.STEER_HARD_LEFT){
+        else if(this.steer== STEER_HARD_LEFT){
             this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)+incr, this.maxSteerAngle);
             Gdx.app.log("Steer", "Hard left");
         }
-        else if(this.steer==GameScreen.STEER_HARD_RIGHT){
+        else if(this.steer== STEER_HARD_RIGHT){
             this.wheelAngle=Math.max(Math.min(this.wheelAngle, 0)-incr, -this.maxSteerAngle);
             Gdx.app.log("Steer", "Hard right");
         }
@@ -146,10 +161,10 @@ public class Car {
         Vector2 baseVector; //vector pointing in the direction force will be applied to a wheel ; relative to the wheel.
         
         //if accelerator is pressed down and speed limit has not been reached, go forwards
-        if((this.accelerate==GameScreen.ACC_ACCELERATE) && (this.getSpeedKMH() < this.maxSpeed)){
+        if((this.accelerate== ACC_ACCELERATE) && (this.getSpeedKMH() < this.maxSpeed)){
         	baseVector= new Vector2(0, -1);
         }
-        else if(this.accelerate==GameScreen.ACC_BRAKE){
+        else if(this.accelerate== ACC_BRAKE){
             //braking, but still moving forwards - increased force
             if(this.getLocalVelocity().y<0)
             	baseVector= new Vector2(0f, 1.3f);
@@ -157,7 +172,7 @@ public class Car {
             else 
             	baseVector=new Vector2(0f, 0.7f);
         }
-        else if (this.accelerate==GameScreen.ACC_NONE ) {
+        else if (this.accelerate== ACC_NONE ) {
         	//slow down if not accelerating
         	baseVector=new Vector2(0, 0);
             if (this.getSpeedKMH()<7)

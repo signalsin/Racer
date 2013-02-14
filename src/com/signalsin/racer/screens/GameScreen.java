@@ -24,16 +24,6 @@ public class GameScreen implements Screen {
 	
 	RacerGame game;
 	
-	public static final int STEER_NONE=0;
-	public static final int STEER_LEFT=1;
-	public static final int STEER_RIGHT=2;
-	public static final int STEER_HARD_LEFT=3;
-	public static final int STEER_HARD_RIGHT=4;
-
-	public static final int ACC_NONE=0;
-	public static final int ACC_ACCELERATE=1;
-	public static final int ACC_BRAKE=2;
-	
 	private OrthographicCamera camera;
 	private SpriteBatch spriteBatch;
 	
@@ -128,26 +118,26 @@ public class GameScreen implements Screen {
 		spriteBatch.setProjectionMatrix(camera.combined);
 		
 		if (Gdx.input.isTouched()){
-			car.accelerate = ACC_ACCELERATE;
+			car.setAccelerate(Car.ACC_ACCELERATE);
 		}
 		else{
-			car.accelerate = ACC_NONE;
+			car.setAccelerate(Car.ACC_NONE);
 		}
 		
 		if (Gdx.input.getAccelerometerY() < -2.5){
-			car.steer = STEER_HARD_LEFT;
+			car.setSteer(Car.STEER_HARD_LEFT);
 		}
 		else if (Gdx.input.getAccelerometerY() < -1){
-			car.steer = STEER_LEFT;
+			car.setSteer(Car.STEER_LEFT);
 		}
 		else if (Gdx.input.getAccelerometerY() > 2.5){
-			car.steer = STEER_HARD_RIGHT;
+			car.setSteer(Car.STEER_HARD_RIGHT);
 		}
 		else if (Gdx.input.getAccelerometerY() > 1){
-			car.steer = STEER_RIGHT;
+			car.setSteer(Car.STEER_RIGHT);
 		}
 		else {
-			car.steer = STEER_NONE;
+			car.setSteer(Car.STEER_NONE);
 		}
 		
 		car.update(Gdx.app.getGraphics().getDeltaTime());
@@ -165,8 +155,8 @@ public class GameScreen implements Screen {
 		//draw the sprites
 		spriteBatch.begin();
 		
-		playerSprite.setPosition(PIXELS_PER_METER * car.body.getPosition().x - ImageCache.getTexture("playerCar").getRegionWidth() / 2,
-				PIXELS_PER_METER * car.body.getPosition().y - ImageCache.getTexture("playerCar").getRegionHeight() / 2 );
+		playerSprite.setPosition(PIXELS_PER_METER * car.body.getPosition().x - playerTexture.getRegionWidth() / 2,
+				PIXELS_PER_METER * car.body.getPosition().y - playerTexture.getRegionHeight() / 2 );
 		playerSprite.setRotation((MathUtils.radiansToDegrees * car.body.getAngle()));
 		
 		playerSprite.draw(spriteBatch);
