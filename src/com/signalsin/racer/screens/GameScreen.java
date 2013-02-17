@@ -25,6 +25,7 @@ public class GameScreen implements Screen {
 	RacerGame game;
 	
 	private OrthographicCamera camera;
+	
 	private SpriteBatch spriteBatch;
 	
 	private Sprite playerSprite;
@@ -44,7 +45,13 @@ public class GameScreen implements Screen {
 	private Box2DDebugRenderer debugRenderer;	
 
 	private int screenWidth;
-	private int screenHeight;	
+	private int screenHeight;
+	private int viewportHeight;
+	private int viewportWidth;
+	private static final int VIRTUAL_WIDTH = 480;
+	private static final int VIRTUAL_HEIGHT = 320;
+	private float aspect;
+	
 	private float worldWidth;
 	private float worldHeight;
 	private static int PIXELS_PER_METER=10;      //how many pixels in a meter
@@ -65,23 +72,44 @@ public class GameScreen implements Screen {
 		//establish the Box2D world first
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
-		worldWidth = screenWidth / PIXELS_PER_METER;
-		worldHeight = screenHeight / PIXELS_PER_METER;
-
+		//worldWidth = screenWidth / PIXELS_PER_METER;
+		//worldHeight = screenHeight / PIXELS_PER_METER;
+		
 		//Box2d World init
 		world = new World(new Vector2(0.0f, 0.0f), true);	
 	    
 	    this.car = new Car(world, 2, 4,
 	    		new Vector2(10, 10), (float) Math.PI, 60, 15, 25, 100);
 		
+	    
+	    //create the camera
 	    camera = new OrthographicCamera();
-	    camera.setToOrtho(false, screenWidth, screenHeight);
+	    
+		aspect = VIRTUAL_WIDTH / VIRTUAL_HEIGHT;
+		if (screenWidth / screenHeight >= aspect) {
+			// Letterbox left and right.
+			viewportHeight = VIRTUAL_HEIGHT;
+			viewportWidth = viewportHeight * screenWidth / screenHeight;
+		} else {
+			// Letterbox above and below.
+			viewportWidth = VIRTUAL_WIDTH;
+			viewportHeight = viewportWidth * screenHeight / screenWidth;
+		}
+	    
+	    camera.setToOrtho(false, viewportWidth, viewportHeight);
+	    
+	    /**
+	     * Now that we have the height/width of the viewport,
+	     * we can set the height/width of the world.
+	     **/
+		worldWidth = viewportWidth / PIXELS_PER_METER;
+		worldHeight = viewportHeight / PIXELS_PER_METER;
 	    
 	    //create the sprite for the player car
 		playerTexture = ImageCache.getTexture("playerCar");
 		playerSprite = new Sprite(playerTexture);
-		playerSprite.setPosition(PIXELS_PER_METER * car.body.getPosition().x - ImageCache.getTexture("playerCar").getRegionWidth() / 2,
-				PIXELS_PER_METER * car.body.getPosition().y - ImageCache.getTexture("playerCar").getRegionHeight() / 2 );
+		playerSprite.setPosition(PIXELS_PER_METER * car.body.getPosition().x - playerTexture.getRegionWidth() / 2,
+				PIXELS_PER_METER * car.body.getPosition().y - playerTexture.getRegionHeight() / 2 );
 	    
 		
 	    spriteBatch = new SpriteBatch();		
