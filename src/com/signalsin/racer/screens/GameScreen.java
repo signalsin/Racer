@@ -3,7 +3,6 @@ package com.signalsin.racer.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.signalsin.racer.CameraHelper;
 import com.signalsin.racer.RacerGame;
 import com.signalsin.racer.car.BoxProp;
 import com.signalsin.racer.car.Car;
@@ -24,9 +24,11 @@ public class GameScreen implements Screen {
 	
 	RacerGame game;
 	
-	private OrthographicCamera camera;
+	//private OrthographicCamera camera;
 	
 	private SpriteBatch spriteBatch;
+	
+	CameraHelper camera;
 	
 	private Sprite playerSprite;
 	private TextureRegion playerTexture;
@@ -42,22 +44,16 @@ public class GameScreen implements Screen {
 	 * that the world collisions are as you expect them to be. It is, however,
 	 * slow, so only use it for testing.
 	 */
-	private Box2DDebugRenderer debugRenderer;	
-
-	private int screenWidth;
-	private int screenHeight;
-	private int viewportHeight;
-	private int viewportWidth;
+	private Box2DDebugRenderer debugRenderer;
+	
 	private static final int VIRTUAL_WIDTH = 480;
 	private static final int VIRTUAL_HEIGHT = 320;
-	private float aspect;
 	
 	private float worldWidth;
 	private float worldHeight;
 	private static int PIXELS_PER_METER=10;      //how many pixels in a meter
 	
 	Car car;
-	
 	
     // constructor to keep a reference to the main Game class
     public GameScreen(RacerGame RacerGame){
@@ -69,41 +65,21 @@ public class GameScreen implements Screen {
 		//load texture files
 		ImageCache.load("cars.atlas");
 		
-		//establish the Box2D world first
-		screenWidth = Gdx.graphics.getWidth();
-		screenHeight = Gdx.graphics.getHeight();
-		//worldWidth = screenWidth / PIXELS_PER_METER;
-		//worldHeight = screenHeight / PIXELS_PER_METER;
-		
 		//Box2d World init
 		world = new World(new Vector2(0.0f, 0.0f), true);	
 	    
 	    this.car = new Car(world, 2, 4,
 	    		new Vector2(10, 10), (float) Math.PI, 60, 15, 25, 100);
 		
-	    
-	    //create the camera
-	    camera = new OrthographicCamera();
-	    
-		aspect = VIRTUAL_WIDTH / VIRTUAL_HEIGHT;
-		if (screenWidth / screenHeight >= aspect) {
-			// Letterbox left and right.
-			viewportHeight = VIRTUAL_HEIGHT;
-			viewportWidth = viewportHeight * screenWidth / screenHeight;
-		} else {
-			// Letterbox above and below.
-			viewportWidth = VIRTUAL_WIDTH;
-			viewportHeight = viewportWidth * screenHeight / screenWidth;
-		}
-	    
-	    camera.setToOrtho(false, viewportWidth, viewportHeight);
+	    //create the camera	    
+	    camera = new CameraHelper(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 	    
 	    /**
 	     * Now that we have the height/width of the viewport,
 	     * we can set the height/width of the world.
 	     **/
-		worldWidth = viewportWidth / PIXELS_PER_METER;
-		worldHeight = viewportHeight / PIXELS_PER_METER;
+		worldWidth = camera.getViewportWidth() / PIXELS_PER_METER;
+		worldHeight = camera.getViewportHeight() / PIXELS_PER_METER;
 	    
 	    //create the sprite for the player car
 		playerTexture = ImageCache.getTexture("playerCar");
@@ -141,9 +117,9 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
 	    // tell the camera to update its matrices.
-	    camera.update();
+	    camera.update(car.body.getPosition().x * PIXELS_PER_METER, car.body.getPosition().y * PIXELS_PER_METER);
 	    
-		spriteBatch.setProjectionMatrix(camera.combined);
+		spriteBatch.setProjectionMatrix(camera.getCombined());
 		
 		if (Gdx.input.isTouched()){
 			car.setAccelerate(Car.ACC_ACCELERATE);
@@ -196,7 +172,7 @@ public class GameScreen implements Screen {
 		 * Draw this last, so we can see the collision boundaries on top of the
 		 * sprites and map.
 		 */
-		debugRenderer.render(world, camera.combined.scale(PIXELS_PER_METER,PIXELS_PER_METER,PIXELS_PER_METER));
+		debugRenderer.render(world, camera.getCombined().scale(PIXELS_PER_METER,PIXELS_PER_METER,PIXELS_PER_METER));
 	}
 
 	@Override
