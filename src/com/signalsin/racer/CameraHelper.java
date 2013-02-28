@@ -3,8 +3,6 @@ package com.signalsin.racer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-
 public class CameraHelper {
 
 	private OrthographicCamera camera;

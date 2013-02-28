@@ -51,7 +51,7 @@ public class GameScreen implements Screen {
 	
 	private float worldWidth;
 	private float worldHeight;
-	private static int PIXELS_PER_METER=10;      //how many pixels in a meter
+	private static int PIXELS_PER_METER=16;      //how many pixels in a meter
 	
 	Car car;
 	
@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
 		//Box2d World init
 		world = new World(new Vector2(0.0f, 0.0f), true);	
 	    
-	    this.car = new Car(world, 2, 4,
+	    this.car = new Car(world, 1, 2,
 	    		new Vector2(10, 10), (float) Math.PI, 60, 15, 25, 100);
 		
 	    //create the camera	    
@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
 	    //outer walls
 		BoxProp wall1 = new BoxProp(world, worldWidth, 1, new Vector2 (worldWidth/2,0.5f)); //bottom
 	    BoxProp wall2 = new BoxProp(world, 1, worldHeight-2, new Vector2 (0.5f, worldHeight/2));//left
-	    BoxProp wall3 = new BoxProp(world,  worldWidth, 1, new Vector2 (worldWidth/2,worldHeight-0.5f));//top
+	    BoxProp wall3 = new BoxProp(world,  worldWidth, 1, new Vector2 (worldWidth/2,worldHeight + 100));//top
 	    BoxProp wall4 = new BoxProp(world, 1, worldHeight-2, new Vector2 (worldWidth-0.5f, worldHeight/2));	  //right
 	
 	}

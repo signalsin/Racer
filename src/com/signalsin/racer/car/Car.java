@@ -62,10 +62,10 @@ public class Car {
 		
 		//initialize wheels
 		this.wheels = new ArrayList<Wheel>();
-		this.wheels.add(new Wheel(world, this, -1f, -1.2f, 0.4f, 0.8f, true,  true)); //top left
-		this.wheels.add(new Wheel(world, this, 1f, -1.2f, 0.4f, 0.8f, true,  true)); //top right
-		this.wheels.add(new Wheel(world, this, -1f, 1.2f, 0.4f, 0.8f, false,  false)); //back left
-		this.wheels.add(new Wheel(world, this, 1f, 1.2f, 0.4f, 0.8f, false,  false)); //back right
+		this.wheels.add(new Wheel(world, this, -0.5f, -0.6f, 0.2f, 0.4f, true,  true)); //top left
+		this.wheels.add(new Wheel(world, this, 0.5f, -0.6f, 0.2f, 0.4f, true,  true)); //top right
+		this.wheels.add(new Wheel(world, this, -0.5f, 0.6f, 0.2f, 0.4f, false,  false)); //back left
+		this.wheels.add(new Wheel(world, this, 0.5f, 0.6f, 0.2f, 0.4f, false,  false)); //back right
 	}
 	
 	public List<Wheel> getPoweredWheels () {
